@@ -1,0 +1,63 @@
+---
+title: 'Data Products Assignment: R Markdown and Leaflet'
+output: html_document
+---
+
+```{r, echo=FALSE}
+# load libraries
+library(leaflet)
+
+# load data
+citydata <- read.csv("simplemaps-worldcities-basic.csv")
+
+# process data
+citydata <- citydata[order(-citydata$pop),]
+citydata <- citydata[1:200,]
+citydata <- citydata[,c("city_ascii","lat","lng","pop")]
+citydata$mag <- citydata[,"pop"] / citydata[1,"pop"]
+citydata$mag <-  citydata$mag * 1000000
+```
+
+```{r, echo=FALSE}
+# leaflet
+theMap <- citydata %>%
+          leaflet() %>%
+          addTiles() %>%
+          addCircles(~lng, ~lat, weight = 1, popup = ~paste("People:", as.character(pop), ",", "City:", city_ascii, sep=" "),
+                     radius = ~mag, stroke = FALSE, fillOpacity = 0.5)
+theMap
+```
+
+## Date of Creation: June 8th, 2017
+
+## Details
+
+This map shows the top 200 most populace cities from 2015. Click on a circle to see a popup with the population count and city name. Data comes from the free basic city map data provided by SimpleMaps at http://simplemaps.com/data/world-cities.
+
+### R Markdown for this page
+
+```{r, echo=TRUE, eval=FALSE}
+# load libraries
+library(leaflet)
+
+# load data
+citydata <- read.csv("simplemaps-worldcities-basic.csv")
+
+# process data
+citydata <- citydata[order(-citydata$pop),]
+citydata <- citydata[1:200,]
+citydata <- citydata[,c("city_ascii","lat","lng","pop")]
+citydata$mag <- citydata[,"pop"] / citydata[1,"pop"]
+citydata$mag <-  citydata$mag * 1000000
+```
+
+```{r, echo=TRUE, eval=FALSE}
+# leaflet
+theMap <- citydata %>%
+          leaflet() %>%
+          addTiles() %>%
+          addCircles(~lng, ~lat, weight = 1,
+                     popup = ~paste("People:", as.character(pop), ",", "City:", city_ascii, sep=" "),
+                     radius = ~mag, stroke = FALSE, fillOpacity = 0.5)
+theMap
+```
